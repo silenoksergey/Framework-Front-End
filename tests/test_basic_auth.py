@@ -1,5 +1,6 @@
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
+from pages.context_menu_page import ContextMenuPage
 from utils.random_data import random_prompt
 
 def test_basic_auth(browser):
@@ -12,11 +13,12 @@ def test_basic_auth(browser):
 
 def test_alerts(browser):
     alert_page = AlertPage(browser)
-    alert_page.open()
+    browser.get(alert_page.ALERT_PAGE_URL)
     alert_page.js_alert_button.click()
     alert_text = browser.get_alert_text()
     assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
     browser.accept_alert()
+    browser.wait_alert_closed()
     alert_result_text = alert_page.alert_result_text.get_text()
     assert alert_result_text == "You successfully clicked an alert", \
         f"Ожидался текст: You successfully clicked an alert, получен {alert_result_text}"
@@ -25,6 +27,7 @@ def test_alerts(browser):
     assert confirm_alert_text == "I am a JS Confirm", \
         f"Ожидался текст: 'I am a JS Confirm', получен: {confirm_alert_text}"
     browser.accept_alert()
+    browser.wait_alert_closed()
     confirm_result_text = alert_page.alert_result_text.get_text()
     assert confirm_result_text == "You clicked: Ok",\
         f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
@@ -35,13 +38,14 @@ def test_alerts(browser):
     random_value = random_prompt(12)
     browser.send_keys_alert(random_value)
     browser.accept_alert()
+    browser.wait_alert_closed()
     prompt_result_text = alert_page.alert_result_text.get_text()
     assert prompt_result_text == f"You entered: {random_value}",\
         f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
 
 def test_alerts_js(browser):
     alert_page = AlertPage(browser)
-    alert_page.open()
+    browser.get(alert_page.ALERT_PAGE_URL)
     alert_page.js_alert_button.js_click()
     alert_text = browser.get_alert_text()
     assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
@@ -64,7 +68,17 @@ def test_alerts_js(browser):
     random_value = random_prompt(12)
     browser.send_keys_alert(random_value)
     browser.accept_alert()
+    browser.wait_alert_closed()
     prompt_result_text = alert_page.alert_result_text.get_text()
     assert prompt_result_text == f"You entered: {random_value}",\
         f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
 
+def test_context_menu(browser):
+    context_menu_page = ContextMenuPage(browser)
+    browser.get(context_menu_page.CONTEXT_MENU_URL)
+    context_menu_page.context_menu_area.right_click()
+    context_menu_text = browser.get_alert_text()
+    assert context_menu_text == "You selected a context menu", \
+        f"Ожидался текст: 'You selected a context menu', получен: {context_menu_text}"
+    browser.accept_alert()
+    browser.wait_alert_closed()

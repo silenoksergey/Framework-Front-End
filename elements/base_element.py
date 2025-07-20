@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver import ActionChains
 
 from browser.browser import Browser
 from logger.logger import Logger
@@ -78,6 +79,16 @@ class BaseElement:
         Logger.info(f"{self}: click")
         try:
             element.click()
+        except WebDriverException as err:
+            Logger.error(f"{self}: '{err}'")
+            raise
+
+    def right_click(self) -> None:
+        element = self.wait_for_clickable()
+        Logger.info(f"{self}: right click")
+        try:
+            actions = ActionChains(self.browser.driver)
+            actions.context_click(element).perform()
         except WebDriverException as err:
             Logger.error(f"{self}: '{err}'")
             raise
