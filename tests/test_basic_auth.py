@@ -1,7 +1,40 @@
+from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
+from utils.random_data import random_prompt
 
-
-def test_basic_auth_page(browser):
+def test_basic_auth(browser):
     basic_auth_page = BasicAuthPage(browser)
     basic_auth_page.open()
-    basic_auth_page.get_success_message()
+    success_message = basic_auth_page.get_success_message()
+    assert success_message == "Congratulations! You must have the proper credentials.", \
+        f"Ожидался текст 'Congratulations! You must have the proper credentials.', получен {success_message}"
+
+
+def test_alerts(browser):
+    alert_page = AlertPage(browser)
+    alert_page.open()
+    alert_page.js_alert_button.click()
+    alert_text = browser.get_alert_text()
+    assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
+    browser.accept_alert()
+    alert_result_text = alert_page.alert_result_text.get_text()
+    assert alert_result_text == "You successfully clicked an alert", \
+        f"Ожидался текст: You successfully clicked an alert, получен {alert_result_text}"
+    alert_page.js_confirm_button.click()
+    confirm_alert_text = browser.get_alert_text()
+    assert confirm_alert_text == "I am a JS Confirm", \
+        f"Ожидался текст: 'I am a JS Confirm', получен: {confirm_alert_text}"
+    browser.accept_alert()
+    confirm_result_text = alert_page.alert_result_text.get_text()
+    assert confirm_result_text == "You clicked: Ok",\
+        f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
+    alert_page.js_prompt_button.click()
+    prompt_alert_text = browser.get_alert_text()
+    assert prompt_alert_text == "I am a JS prompt",\
+        f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
+    random_value = random_prompt(12)
+    browser.send_keys_alert(random_value)
+    browser.accept_alert()
+    prompt_result_text = alert_page.alert_result_text.get_text()
+    assert prompt_result_text == f"You entered: {random_value}",\
+        f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text} "

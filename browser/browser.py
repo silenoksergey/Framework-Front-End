@@ -6,7 +6,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-# from elements.base_element import BaseElement  # УДАЛЁН лишний импорт
+
 from logger.logger import Logger
 
 

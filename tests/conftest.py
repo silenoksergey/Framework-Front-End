@@ -1,10 +1,11 @@
 import pytest
 from browser.browser import Browser
-from selenium import webdriver
+from browser.browser_factory import BrowserFactory
+
 
 @pytest.fixture
 def browser():
-    driver = webdriver.Chrome()
+    driver = BrowserFactory.get_driver(options=['--window-size=1920,1080'])
     browser = Browser(driver)
     yield browser
-    driver.quit()
+    browser.quit()
