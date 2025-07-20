@@ -37,4 +37,34 @@ def test_alerts(browser):
     browser.accept_alert()
     prompt_result_text = alert_page.alert_result_text.get_text()
     assert prompt_result_text == f"You entered: {random_value}",\
-        f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text} "
+        f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
+
+def test_alerts_js(browser):
+    alert_page = AlertPage(browser)
+    alert_page.open()
+    alert_page.js_alert_button.js_click()
+    alert_text = browser.get_alert_text()
+    assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
+    browser.accept_alert()
+    alert_result_text = alert_page.alert_result_text.get_text()
+    assert alert_result_text == "You successfully clicked an alert", \
+        f"Ожидался текст: You successfully clicked an alert, получен {alert_result_text}"
+    alert_page.js_confirm_button.js_click()
+    confirm_alert_text = browser.get_alert_text()
+    assert confirm_alert_text == "I am a JS Confirm", \
+        f"Ожидался текст: 'I am a JS Confirm', получен: {confirm_alert_text}"
+    browser.accept_alert()
+    confirm_result_text = alert_page.alert_result_text.get_text()
+    assert confirm_result_text == "You clicked: Ok",\
+        f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
+    alert_page.js_prompt_button.js_click()
+    prompt_alert_text = browser.get_alert_text()
+    assert prompt_alert_text == "I am a JS prompt",\
+        f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
+    random_value = random_prompt(12)
+    browser.send_keys_alert(random_value)
+    browser.accept_alert()
+    prompt_result_text = alert_page.alert_result_text.get_text()
+    assert prompt_result_text == f"You entered: {random_value}",\
+        f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
+
