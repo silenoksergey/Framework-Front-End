@@ -38,9 +38,11 @@ class ActionsPage(BasePage):
         return float(self.displayed_value_slider.get_text())
 
     def get_slider_min_value(self) -> float:
+        Logger.info(f"{self} get slider min value")
         return float(self.slider_input.get_attribute("min"))
 
     def get_slider_max_value(self) -> float:
+        Logger.info(f"{self} get slider max value")
         return float(self.slider_input.get_attribute("max"))
 
     def set_random_slider_value(self) -> None:
