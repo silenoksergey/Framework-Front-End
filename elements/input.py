@@ -24,7 +24,7 @@ class Input(BaseElement):
             self.clear()
 
         element = self.wait_for_visible()
-        Logger.info(f"{self}: send keys = '{keys}'")
+        Logger.info(f"{self}: send keys = '{repr(keys)}'")
         try:
             element.send_keys(keys)
         except WebDriverException as err:

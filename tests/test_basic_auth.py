@@ -1,3 +1,6 @@
+import time
+
+from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
 from pages.context_menu_page import ContextMenuPage
@@ -82,3 +85,30 @@ def test_context_menu(browser):
         f"Ожидался текст: 'You selected a context menu', получен: {context_menu_text}"
     browser.accept_alert()
     browser.wait_alert_closed()
+
+def test_actions(browser):
+    actions_page = ActionsPage(browser)
+    browser.get(ActionsPage.ACTIONS_PAGE_URL)
+    slider_button = actions_page.slider_input
+    actions_page.set_random_slider_value()
+    slider_value = actions_page.get_slider_value()
+    displayed_slider_value = actions_page.get_displayed_value()
+    assert slider_value == displayed_slider_value, (f"Установлено значение слайдера: '{slider_button}',"
+                                                    f"отображается: '{displayed_slider_value}'")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
