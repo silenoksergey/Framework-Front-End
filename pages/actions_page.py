@@ -29,6 +29,9 @@ class ActionsPage(BasePage):
         self.displayed_value_slider = Label(self.browser, self.DISPLAYED_VALUE_SLIDER,
                                             description="Action Page -> Slider Displayed Value")
 
+    def open(self) -> None:
+        self.browser.get(self.ACTIONS_PAGE_URL)
+
     def get_slider_value(self):
         Logger.info(f"{self} get slider value")
         return float(self.slider_input.get_attribute("value"))

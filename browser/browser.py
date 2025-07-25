@@ -63,6 +63,11 @@ class Browser:
             Logger.error(f"{self}: {err}")
             raise
 
+    def get_title(self) -> str:
+        title = self._driver.title
+        Logger.info(f"{self}: get title: '{title}'")
+        return title
+
     def switch_to_window(self, title: str) -> None:
         Logger.info(f"{self}: switch to window with title '{title}'")
         end_time = time.time() + self.PAGE_LOAD_TIMEOUT

@@ -2,11 +2,12 @@ from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
 from pages.context_menu_page import ContextMenuPage
+from pages.handlers_page import HandlersPage
 from pages.hovers_page import HoversPage
 from utils.random_data import random_prompt
 
 
-def test_basic_auth(browser):
+def test_basic_auth_page(browser):
     basic_auth_page = BasicAuthPage(browser)
     basic_auth_page.open()
     success_message = basic_auth_page.get_success_message()
@@ -14,9 +15,9 @@ def test_basic_auth(browser):
         f"Ожидался текст 'Congratulations! You must have the proper credentials.', получен {success_message}"
 
 
-def test_alerts(browser):
+def test_alerts_page(browser):
     alert_page = AlertPage(browser)
-    browser.get(alert_page.ALERT_PAGE_URL)
+    alert_page.open()
     alert_page.js_alert_button.click()
     alert_text = browser.get_alert_text()
     assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
@@ -47,9 +48,9 @@ def test_alerts(browser):
         f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
 
 
-def test_alerts_js(browser):
+def test_alerts_js_page(browser):
     alert_page = AlertPage(browser)
-    browser.get(alert_page.ALERT_PAGE_URL)
+    alert_page.open()
     alert_page.js_alert_button.js_click()
     alert_text = browser.get_alert_text()
     assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
@@ -78,9 +79,9 @@ def test_alerts_js(browser):
         f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
 
 
-def test_context_menu(browser):
+def test_context_menu_page(browser):
     context_menu_page = ContextMenuPage(browser)
-    browser.get(context_menu_page.CONTEXT_MENU_URL)
+    context_menu_page.open()
     context_menu_page.context_menu_area.right_click()
     context_menu_text = browser.get_alert_text()
     assert context_menu_text == "You selected a context menu", \
@@ -89,9 +90,9 @@ def test_context_menu(browser):
     browser.wait_alert_closed()
 
 
-def test_actions(browser):
+def test_actions_page(browser):
     actions_page = ActionsPage(browser)
-    browser.get(ActionsPage.ACTIONS_PAGE_URL)
+    actions_page.open()
     slider_button = actions_page.slider_input
     actions_page.set_random_slider_value()
     slider_value = actions_page.get_slider_value()
@@ -100,7 +101,18 @@ def test_actions(browser):
                                                     f"отображается: '{displayed_slider_value}'")
 
 
-def test_hovers(browser):
+def test_hovers_page(browser):
     hovers_page = HoversPage(browser)
     hovers_page.open()
     hovers_page.process_all_users()
+
+
+def test_handlers_page(browser):
+    handlers_page = HandlersPage(browser)
+    handlers_page.open()
+    handlers_page.wait_for_open()
+    handlers_page.link_button.click()
+    title_window = browser.get_title()
+    assert title_window == handlers_page.NEW_WINDOW_TITLE, \
+        (f"Ожидалось название текущей вкладки '{handlers_page.NEW_WINDOW_TITLE}', "
+         f"получено: '{title_window}'")

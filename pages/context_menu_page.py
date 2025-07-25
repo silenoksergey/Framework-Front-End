@@ -17,3 +17,6 @@ class ContextMenuPage(BasePage):
                                      description="Context Menu Page -> Button Context Menu Area")
         self.context_menu_area = Button(self.browser, self.UNIQUE_ELEMENT_LOC,
                                         description="Context Menu Page -> Button Context Menu Area")
+
+    def open(self) -> None:
+        self.browser.get(self.CONTEXT_MENU_URL)
