@@ -1,10 +1,10 @@
-import time
-
 from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
 from pages.context_menu_page import ContextMenuPage
+from pages.hovers_page import HoversPage
 from utils.random_data import random_prompt
+
 
 def test_basic_auth(browser):
     basic_auth_page = BasicAuthPage(browser)
@@ -32,19 +32,20 @@ def test_alerts(browser):
     browser.accept_alert()
     browser.wait_alert_closed()
     confirm_result_text = alert_page.alert_result_text.get_text()
-    assert confirm_result_text == "You clicked: Ok",\
+    assert confirm_result_text == "You clicked: Ok", \
         f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
     alert_page.js_prompt_button.click()
     prompt_alert_text = browser.get_alert_text()
-    assert prompt_alert_text == "I am a JS prompt",\
+    assert prompt_alert_text == "I am a JS prompt", \
         f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
     random_value = random_prompt(12)
     browser.send_keys_alert(random_value)
     browser.accept_alert()
     browser.wait_alert_closed()
     prompt_result_text = alert_page.alert_result_text.get_text()
-    assert prompt_result_text == f"You entered: {random_value}",\
+    assert prompt_result_text == f"You entered: {random_value}", \
         f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
+
 
 def test_alerts_js(browser):
     alert_page = AlertPage(browser)
@@ -62,19 +63,20 @@ def test_alerts_js(browser):
         f"Ожидался текст: 'I am a JS Confirm', получен: {confirm_alert_text}"
     browser.accept_alert()
     confirm_result_text = alert_page.alert_result_text.get_text()
-    assert confirm_result_text == "You clicked: Ok",\
+    assert confirm_result_text == "You clicked: Ok", \
         f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
     alert_page.js_prompt_button.js_click()
     prompt_alert_text = browser.get_alert_text()
-    assert prompt_alert_text == "I am a JS prompt",\
+    assert prompt_alert_text == "I am a JS prompt", \
         f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
     random_value = random_prompt(12)
     browser.send_keys_alert(random_value)
     browser.accept_alert()
     browser.wait_alert_closed()
     prompt_result_text = alert_page.alert_result_text.get_text()
-    assert prompt_result_text == f"You entered: {random_value}",\
+    assert prompt_result_text == f"You entered: {random_value}", \
         f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
+
 
 def test_context_menu(browser):
     context_menu_page = ContextMenuPage(browser)
@@ -85,6 +87,7 @@ def test_context_menu(browser):
         f"Ожидался текст: 'You selected a context menu', получен: {context_menu_text}"
     browser.accept_alert()
     browser.wait_alert_closed()
+
 
 def test_actions(browser):
     actions_page = ActionsPage(browser)
@@ -97,18 +100,7 @@ def test_actions(browser):
                                                     f"отображается: '{displayed_slider_value}'")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def test_hovers(browser):
+    hovers_page = HoversPage(browser)
+    hovers_page.open()
+    hovers_page.process_all_users()
