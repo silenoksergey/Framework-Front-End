@@ -1,3 +1,5 @@
+import time
+
 from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
@@ -111,8 +113,14 @@ def test_handlers_page(browser):
     handlers_page = HandlersPage(browser)
     handlers_page.open()
     handlers_page.wait_for_open()
-    handlers_page.link_button.click()
-    title_window = browser.get_title()
-    assert title_window == handlers_page.NEW_WINDOW_TITLE, \
-        (f"Ожидалось название текущей вкладки '{handlers_page.NEW_WINDOW_TITLE}', "
-         f"получено: '{title_window}'")
+
+    handlers_page.test_single_new_window()
+    first_new_handle = handlers_page.get_last_window_handle()
+    handlers_page.test_single_new_window()
+    second_new_handle = handlers_page.get_last_window_handle()
+
+    handlers_page.switch_to_window_by_handle(first_new_handle)
+    handlers_page.close_current_window()
+
+    handlers_page.switch_to_window_by_handle(second_new_handle)
+    handlers_page.close_current_window()

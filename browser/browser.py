@@ -35,6 +35,15 @@ class Browser:
         Logger.info(f"{self}: close window handle = '{self._driver.current_window_handle}'")
         self._driver.close()
 
+    def get_window_handles(self) -> list:
+        return self._driver.window_handles
+
+    def get_last_window_handle(self) -> str:
+        return self._driver.window_handles[-1]
+
+    def switch_to_window_by_handle(self, handle: str) -> None:
+        self._driver.switch_to.window(handle)
+
     def quit(self) -> None:
         Logger.info(f"{self}: quit")
         try:
