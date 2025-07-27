@@ -1,12 +1,9 @@
 import logging
 import time
-
 from selenium.common import WebDriverException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-
-
 from logger.logger import Logger
 
 
@@ -132,10 +129,6 @@ class Browser:
     def switch_to_default_content(self) -> None:
         Logger.info(f"{self}: switch to default content")
         self.driver.switch_to.default_content()
-
-    def switch_to_parent_frame(self):
-        Logger.info(f"{self}: switch to parent frame")
-        self.driver.switch_to.parent_frame()
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}[{self.driver.session_id}]"

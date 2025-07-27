@@ -1,10 +1,8 @@
-import time
-
-from logger.logger import Logger
 from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
 from pages.context_menu_page import ContextMenuPage
+from pages.dynamic_content_page import DynamicContentPage
 from pages.frames_main_page import FramesMainPage
 from pages.frames_page import FramesPage
 from pages.handlers_page import HandlersPage
@@ -154,3 +152,12 @@ def test_frames_pages(browser):
     assert first_frame_text == second_frame_text, \
         (f"Ожидалось, что текст первого фрейма будет равен тексту второго фрейма."
          f" Первый фрейм: '{first_frame_text}', второй фрейм: '{second_frame_text}'")
+
+def test_dynamic_content_page(browser):
+    dynamic_content_page = DynamicContentPage(browser)
+    dynamic_content_page.open()
+    dynamic_content_page.wait_for_open()
+    dynamic_content_page.find_duplicate_avatars()
+
+
+
