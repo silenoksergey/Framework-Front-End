@@ -4,8 +4,11 @@ from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
 from pages.context_menu_page import ContextMenuPage
+from pages.frames_main_page import FramesMainPage
+from pages.frames_page import FramesPage
 from pages.handlers_page import HandlersPage
 from pages.hovers_page import HoversPage
+from pages.nested_frames_page import NestedFramesPage
 from utils.random_data import random_prompt
 
 
@@ -72,7 +75,7 @@ def test_alerts_js_page(browser):
     prompt_alert_text = browser.get_alert_text()
     assert prompt_alert_text == "I am a JS prompt", \
         f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
-    random_value = random_prompt(12)
+    random_value = random_prompt()
     browser.send_keys_alert(random_value)
     browser.accept_alert()
     browser.wait_alert_closed()
@@ -124,3 +127,27 @@ def test_handlers_page(browser):
 
     handlers_page.switch_to_window_by_handle(second_new_handle)
     handlers_page.close_current_window()
+
+
+def test_frames_pages(browser):
+    frames_main_page = FramesMainPage(browser)
+    frames_page = FramesPage(browser)
+    nested_frames_page = NestedFramesPage(browser)
+    frames_page.open()
+    frames_page.wait_for_open()
+    frames_main_page.click_ensure_menu()
+    frames_main_page.nested_frames_button.click()
+    nested_frames_page.wait_for_open()
+    nested_parent_frame_text = nested_frames_page.get_parent_frame_text()
+    assert nested_parent_frame_text == "Parent frame", \
+        f"Ожидался текст: 'Parent frame', получен: '{nested_parent_frame_text}'"
+    nested_child_frame_text = nested_frames_page.get_child_frame_text()
+    assert nested_child_frame_text == "Child Iframe", \
+        f"Ожидался текст: 'Child Iframe', получен: '{nested_child_frame_text}'"
+    frames_main_page.frames_button.click()
+    frames_page.wait_for_open()
+    first_frame_text = frames_page.get_frame_text(frames_page.first_frame)
+    second_frame_text = frames_page.get_frame_text(frames_page.second_frame)
+    assert first_frame_text == second_frame_text, \
+        (f"Ожидалось, что текст первого фрейма будет равен тексту второго фрейма."
+         f" Первый фрейм: '{first_frame_text}', второй фрейм: '{second_frame_text}'")

@@ -9,8 +9,10 @@ from pages.base_page import BasePage
 class WindowTitles(StrEnum):
     NEW_WINDOW = "New Window"
 
+
 class PageTexts(StrEnum):
     NEW_WINDOW_TEXT = "New Window"
+
 
 class HandlersPage(BasePage):
     UNIQUE_ELEMENT_LOC = "//*[contains(@class, 'example')]//*[contains(@target, '_blank')]"
@@ -49,11 +51,11 @@ class HandlersPage(BasePage):
 
     def verify_new_window_content(self) -> None:
         text_page = self.new_window_page_text.get_text()
-        assert text_page == self.NEW_WINDOW_PAGE_TEXT,\
+        assert text_page == self.NEW_WINDOW_PAGE_TEXT, \
             f"Ожидался текст '{self.NEW_WINDOW_PAGE_TEXT}', получен '{text_page}'"
 
         title_window = self.browser.get_title()
-        assert title_window == self.NEW_WINDOW_TITLE,\
+        assert title_window == self.NEW_WINDOW_TITLE, \
             f"Ожидалось название текущей вкладки: '{self.NEW_WINDOW_TITLE}', получено: '{title_window}'"
 
     def get_last_window_handle(self) -> str:

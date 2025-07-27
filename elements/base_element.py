@@ -67,7 +67,7 @@ class BaseElement:
     def wait_for_visible(self) -> WebElement:
         return self._wait_for(expected_condition=expected_conditions.visibility_of_element_located)
 
-    def is_exist(self):
+    def is_exist(self) -> bool:
         try:
             self.wait_for_presence()
             return True

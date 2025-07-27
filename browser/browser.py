@@ -36,12 +36,15 @@ class Browser:
         self._driver.close()
 
     def get_window_handles(self) -> list:
+        Logger.info(f"{self}: get window handles")
         return self._driver.window_handles
 
     def get_last_window_handle(self) -> str:
+        Logger.info(f"{self}: get last window handle")
         return self._driver.window_handles[-1]
 
     def switch_to_window_by_handle(self, handle: str) -> None:
+        Logger.info(f"{self}: switch to window by handle: '{handle}'")
         self._driver.switch_to.window(handle)
 
     def quit(self) -> None:
@@ -125,6 +128,14 @@ class Browser:
     def switch_to_frame(self, frame: 'BaseElement'):
         Logger.info(f"{self}: switch to frame")
         return self.driver.switch_to.frame(frame.wait_for_presence())
+
+    def switch_to_default_content(self) -> None:
+        Logger.info(f"{self}: switch to default content")
+        self.driver.switch_to.default_content()
+
+    def switch_to_parent_frame(self):
+        Logger.info(f"{self}: switch to parent frame")
+        self.driver.switch_to.parent_frame()
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}[{self.driver.session_id}]"
