@@ -1,5 +1,6 @@
 import time
 
+from logger.logger import Logger
 from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
@@ -144,7 +145,9 @@ def test_frames_pages(browser):
     nested_child_frame_text = nested_frames_page.get_child_frame_text()
     assert nested_child_frame_text == "Child Iframe", \
         f"Ожидался текст: 'Child Iframe', получен: '{nested_child_frame_text}'"
-    frames_main_page.frames_button.click()
+    frames_main_page.click_ensure_menu()
+    frames_button = frames_main_page.frames_button
+    frames_button.click()
     frames_page.wait_for_open()
     first_frame_text = frames_page.get_frame_text(frames_page.first_frame)
     second_frame_text = frames_page.get_frame_text(frames_page.second_frame)

@@ -7,7 +7,7 @@ from pages.base_page import BasePage
 class FramesMainPage(BasePage):
     ENSURE_MENU = "(//*[contains(@class, 'header-text')])[3]"
     NESTED_FRAMES_BUTTON = "//*[contains(@class, 'element-list collapse show')]//*[@id='item-3']"
-    FRAMES_BUTTON = "//*[contains(@class, 'btn btn-light active')]"
+    FRAMES_BUTTON = "//*[contains(@class, 'element-list collapse show')]//*[@id='item-2']"
 
     def __init__(self, browser: Browser):
         super().__init__(browser)
