@@ -157,7 +157,8 @@ def test_dynamic_content_page(browser):
     dynamic_content_page = DynamicContentPage(browser)
     dynamic_content_page.open()
     dynamic_content_page.wait_for_open()
-    dynamic_content_page.find_duplicate_avatars()
+    has_duplicates_avatars = dynamic_content_page.check_duplicates_avatars()
+    assert has_duplicates_avatars is True, f"Не найдены дубликаты аватаров"
 
 
 

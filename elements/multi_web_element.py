@@ -1,3 +1,5 @@
+from typing_extensions import Self
+
 from browser.browser import Browser
 from .web_element import WebElement
 
@@ -19,7 +21,12 @@ class MultiWebElement:
         self.timeout = timeout if timeout is not None else self.DEFAULT_TIMEOUT
         self.description = description if description else self.formattable_xpath.format("'i'")
 
-    def __iter__(self) -> WebElement:
+    def __iter__(self) -> Self:
+        self.index = 1
+        return self
+
+
+    def __next__(self) -> WebElement:
         current_element = WebElement(
             self.browser,
             self.formattable_xpath.format(self.index),

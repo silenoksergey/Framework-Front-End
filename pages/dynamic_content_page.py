@@ -1,3 +1,4 @@
+import time
 from collections import Counter
 
 from browser.browser import Browser
@@ -10,7 +11,8 @@ from pages.base_page import BasePage
 class DynamicContentPage(BasePage):
     UNIQUE_ELEMENT_LOC = "//*[@id='flash-messages']"
     DYNAMIC_CONTENT_PAGE_URL = "https://the-internet.herokuapp.com/dynamic_content"
-    AVATARS = "//img[contains(@src, 'Avatar-{}')]"
+    AVATARS = "(//*[contains(@class, 'large-2 columns')]//img)[{}]"
+    MAX_DUPLICATE_SEARCH_ATTEMPTS = 10
 
     def __init__(self, browser: Browser):
         super().__init__(browser)
@@ -30,40 +32,19 @@ class DynamicContentPage(BasePage):
     def open(self) -> None:
         self.browser.get(self.DYNAMIC_CONTENT_PAGE_URL)
 
-    def get_avatar(self) -> WebElement:
-        return self.avatars.__iter__()
+    def check_duplicates_avatars(self, max_attempts=MAX_DUPLICATE_SEARCH_ATTEMPTS) -> bool:
+        for i in range(max_attempts):
+            avatars_list = []
+            for avatar in self.avatars:
+                avatar_src = avatar.get_attribute('src')
+                if avatar_src in avatars_list:
+                    return True
+                avatars_list.append(avatar_src)
+            if i < max_attempts - 1:
+                self.browser.driver.refresh()
+                self.wait_for_open()
 
-    def get_all_avatars(self) -> list:
-        avatars = []
-        index = 1
-        while True:
-            try:
-                avatar = self.get_avatar()
-                if not avatar.is_exist():
-                    break
-
-                avatars.append(avatar)
-                index += 1
-
-            except StopIteration:
-                break
-        return avatars
-
-    def verify_avatars(self, max_count=2):
-        avatars = self.get_all_avatars()
-        counter = Counter(avatars)
-        return any(count >= max_count for count in counter.values())
-
-    def find_duplicate_avatars(self, max_attempts=10):
-        has_duplicates = False
-        attempt = 0
-        while not has_duplicates and attempt < max_attempts:
-            attempt += 1
-            has_duplicates = self.verify_avatars()
-            self.browser.driver.refresh()
-            Logger.info(f"Attempt {attempt}/{max_attempts}")
-
-        assert has_duplicates is True, f"Повторяющихся аватаров не найдено"
+        return False
 
 
 
