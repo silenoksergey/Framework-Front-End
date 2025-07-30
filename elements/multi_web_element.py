@@ -1,5 +1,4 @@
 from typing_extensions import Self
-
 from browser.browser import Browser
 from .web_element import WebElement
 

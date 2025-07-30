@@ -1,10 +1,6 @@
-import time
-from collections import Counter
-
 from browser.browser import Browser
 from elements.multi_web_element import MultiWebElement
 from elements.web_element import WebElement
-from logger.logger import Logger
 from pages.base_page import BasePage
 
 
