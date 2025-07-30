@@ -7,6 +7,7 @@ from pages.frames_main_page import FramesMainPage
 from pages.frames_page import FramesPage
 from pages.handlers_page import HandlersPage
 from pages.hovers_page import HoversPage
+from pages.infinite_scroll_page import InfiniteScrollPage
 from pages.nested_frames_page import NestedFramesPage
 from utils.random_data import random_prompt
 
@@ -159,6 +160,16 @@ def test_dynamic_content_page(browser):
     dynamic_content_page.wait_for_open()
     has_duplicates_avatars = dynamic_content_page.check_duplicates_avatars()
     assert has_duplicates_avatars is True, f"Не найдены дубликаты аватаров"
+
+
+def test_infinite_scroll_page(browser):
+    infinite_scroll_page = InfiniteScrollPage(browser)
+    infinite_scroll_page.open()
+    infinite_scroll_page.scroll_until_paragraphs()
+
+
+
+
 
 
 
