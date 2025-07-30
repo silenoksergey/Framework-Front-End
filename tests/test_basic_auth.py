@@ -1,3 +1,5 @@
+import time
+
 from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
@@ -9,6 +11,7 @@ from pages.handlers_page import HandlersPage
 from pages.hovers_page import HoversPage
 from pages.infinite_scroll_page import InfiniteScrollPage
 from pages.nested_frames_page import NestedFramesPage
+from pages.upload_page import UploadPage
 from utils.random_data import random_prompt
 
 
@@ -154,6 +157,7 @@ def test_frames_pages(browser):
         (f"Ожидалось, что текст первого фрейма будет равен тексту второго фрейма."
          f" Первый фрейм: '{first_frame_text}', второй фрейм: '{second_frame_text}'")
 
+
 def test_dynamic_content_page(browser):
     dynamic_content_page = DynamicContentPage(browser)
     dynamic_content_page.open()
@@ -165,11 +169,21 @@ def test_dynamic_content_page(browser):
 def test_infinite_scroll_page(browser):
     infinite_scroll_page = InfiniteScrollPage(browser)
     infinite_scroll_page.open()
+    infinite_scroll_page.wait_for_open()
     infinite_scroll_page.scroll_until_paragraphs()
 
 
-
-
-
-
-
+def test_upload_page(browser):
+    upload_page = UploadPage(browser)
+    upload_page.open()
+    upload_page.wait_for_open()
+    upload_page.upload_image()
+    upload_file_name = upload_page.get_upload_file_name()
+    upload_page.upload_submit_button.click()
+    successful_message = upload_page.successful_message.get_text()
+    assert successful_message == "File Uploaded!", \
+        f"Ожидался текст: 'File Uploaded!', получен: {successful_message}"
+    displayed_upload_file_name = upload_page.upload_file_name.get_text()
+    assert upload_file_name == displayed_upload_file_name, \
+        (f"Неверное отображение имени файла. Ожидалось: '{upload_file_name}',"
+         f" отображается: '{displayed_upload_file_name}'")
