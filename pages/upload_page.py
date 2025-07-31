@@ -13,6 +13,9 @@ class UploadPage(BasePage):
     UPLOAD_SUBMIT_BUTTON = "//*[@id='file-submit']"
     SUCCESSFUL_MESSAGE = "//*[contains(@class, 'example')]//h3"
     UPLOAD_FILE_NAME = "//*[@id='uploaded-files']"
+    UPLOAD_AREA = "//*[@id='drag-drop-upload']"
+    UPLOAD_AREA_FILE_DISPLAY = "//*[@id='drag-drop-upload']//*[contains(@class, 'dz-filename')]//span"
+    UPLOAD_SUCCESS_MARK = "//*[@id='drag-drop-upload']//*[contains(@class, 'dz-success-mark')]//span"
 
     def __init__(self, browser: Browser):
         super().__init__(browser)
@@ -45,6 +48,24 @@ class UploadPage(BasePage):
             self.browser,
             self.UPLOAD_FILE_NAME,
             description="Upload Page -> Upload File Name Label"
+        )
+
+        self.upload_area = Button(
+            self.browser,
+            self.UPLOAD_AREA,
+            description="Upload Page -> Upload Area Button"
+        )
+
+        self.upload_area_file_display = Label(
+            self.browser,
+            self.UPLOAD_AREA_FILE_DISPLAY,
+            description="Upload Page -> Upload Area File Display"
+        )
+
+        self.upload_success_mark = Label(
+            self.browser,
+            self.UPLOAD_SUCCESS_MARK,
+            description="Upload Page -> Upload Success Mark"
         )
 
     def open(self) -> None:

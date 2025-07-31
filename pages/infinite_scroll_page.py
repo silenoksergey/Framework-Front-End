@@ -1,5 +1,4 @@
 from browser.browser import Browser
-from elements.label import Label
 from elements.multi_web_element import MultiWebElement
 from elements.web_element import WebElement
 from logger.logger import Logger

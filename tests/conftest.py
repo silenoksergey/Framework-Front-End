@@ -5,7 +5,7 @@ from browser.browser_factory import BrowserFactory
 
 @pytest.fixture
 def browser():
-    driver = BrowserFactory.get_driver(options=['--window-size=1920,1080'])
+    driver = BrowserFactory.get_driver()
     browser = Browser(driver)
     yield browser
     browser.quit()

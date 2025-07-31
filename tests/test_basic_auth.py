@@ -1,3 +1,4 @@
+import os
 import time
 
 from pages.actions_page import ActionsPage
@@ -12,6 +13,7 @@ from pages.hovers_page import HoversPage
 from pages.infinite_scroll_page import InfiniteScrollPage
 from pages.nested_frames_page import NestedFramesPage
 from pages.upload_page import UploadPage
+from utils.pyautogui_utils import PyAutoGUIUtilities
 from utils.random_data import random_prompt
 
 
@@ -187,3 +189,19 @@ def test_upload_page(browser):
     assert upload_file_name == displayed_upload_file_name, \
         (f"Неверное отображение имени файла. Ожидалось: '{upload_file_name}',"
          f" отображается: '{displayed_upload_file_name}'")
+
+def test_upload_dialog_window(browser):
+    upload_page = UploadPage(browser)
+    upload_page.open()
+    upload_page.wait_for_open()
+    upload_page.upload_area.click()
+    PyAutoGUIUtilities.upload_file(upload_page.IMAGE_FILE_PATH)
+    expected_filename = os.path.basename(upload_page.IMAGE_FILE_PATH)
+    display_file_name = upload_page.upload_area_file_display.get_text()
+    assert expected_filename == display_file_name, \
+        (f"Отображается неверное имя файла. Ожидалось: '{expected_filename}',"
+         f" отображается: '{display_file_name}'")
+    assert upload_page.upload_success_mark.is_exist(), f"Галочка об успешной загрузке файла отсутствует"
+
+
+
