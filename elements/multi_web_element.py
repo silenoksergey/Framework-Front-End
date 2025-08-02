@@ -24,7 +24,6 @@ class MultiWebElement:
         self.index = 1
         return self
 
-
     def __next__(self) -> WebElement:
         current_element = WebElement(
             self.browser,

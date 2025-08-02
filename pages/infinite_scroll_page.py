@@ -40,27 +40,6 @@ class InfiniteScrollPage(BasePage):
         Logger.info(f"Найдено элементов с классом 'jscroll-added': {count}")
         return count
 
-    def scroll_until_paragraphs(self, max_view_paragraphs=MAX_VIEW_PARAGRAPHS):
-        max_attempts = 50
-        attempt = 0
+    def get_paragraphs_count(self) -> int:
+        return self.count_paragraphs()
 
-        while True:
-            attempt += 1
-
-            if attempt > max_attempts:
-                Logger.warning(f"Превышено максимальное количество попыток ({max_attempts})")
-                break
-
-            count_view_paragraphs = self.count_paragraphs()
-            if count_view_paragraphs < max_view_paragraphs:
-                self.scroll_to_bottom()
-
-
-            elif count_view_paragraphs == max_view_paragraphs:
-                Logger.info(f"Цель достигнута! Найдено {count_view_paragraphs} абзацев")
-                return count_view_paragraphs
-
-            else:
-                Logger.warning(f"Отображается {count_view_paragraphs},"
-                               f" при максимально допустимом {max_view_paragraphs}")
-                break

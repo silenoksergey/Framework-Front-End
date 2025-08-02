@@ -1,5 +1,4 @@
 import os
-import time
 
 from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
@@ -28,59 +27,41 @@ def test_basic_auth_page(browser):
 def test_alerts_page(browser):
     alert_page = AlertPage(browser)
     alert_page.open()
-    alert_page.js_alert_button.click()
+
+    _test_alert_workflow(alert_page, browser, use_js=False)
+
+    _test_alert_workflow(alert_page, browser, use_js=True)
+
+
+def _test_alert_workflow(alert_page, browser, use_js=False):
+    click_method = "js_click" if use_js else "click"
+
+    getattr(alert_page.js_alert_button, click_method)()
     alert_text = browser.get_alert_text()
     assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
     browser.accept_alert()
-    browser.wait_alert_closed()
+    if not use_js:
+        browser.wait_alert_closed()
     alert_result_text = alert_page.alert_result_text.get_text()
     assert alert_result_text == "You successfully clicked an alert", \
         f"Ожидался текст: You successfully clicked an alert, получен {alert_result_text}"
-    alert_page.js_confirm_button.click()
+
+    getattr(alert_page.js_confirm_button, click_method)()
     confirm_alert_text = browser.get_alert_text()
     assert confirm_alert_text == "I am a JS Confirm", \
         f"Ожидался текст: 'I am a JS Confirm', получен: {confirm_alert_text}"
     browser.accept_alert()
-    browser.wait_alert_closed()
+    if not use_js:
+        browser.wait_alert_closed()
     confirm_result_text = alert_page.alert_result_text.get_text()
     assert confirm_result_text == "You clicked: Ok", \
         f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
-    alert_page.js_prompt_button.click()
+
+    getattr(alert_page.js_prompt_button, click_method)()
     prompt_alert_text = browser.get_alert_text()
     assert prompt_alert_text == "I am a JS prompt", \
         f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
-    random_value = random_prompt(12)
-    browser.send_keys_alert(random_value)
-    browser.accept_alert()
-    browser.wait_alert_closed()
-    prompt_result_text = alert_page.alert_result_text.get_text()
-    assert prompt_result_text == f"You entered: {random_value}", \
-        f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
-
-
-def test_alerts_js_page(browser):
-    alert_page = AlertPage(browser)
-    alert_page.open()
-    alert_page.js_alert_button.js_click()
-    alert_text = browser.get_alert_text()
-    assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
-    browser.accept_alert()
-    alert_result_text = alert_page.alert_result_text.get_text()
-    assert alert_result_text == "You successfully clicked an alert", \
-        f"Ожидался текст: You successfully clicked an alert, получен {alert_result_text}"
-    alert_page.js_confirm_button.js_click()
-    confirm_alert_text = browser.get_alert_text()
-    assert confirm_alert_text == "I am a JS Confirm", \
-        f"Ожидался текст: 'I am a JS Confirm', получен: {confirm_alert_text}"
-    browser.accept_alert()
-    confirm_result_text = alert_page.alert_result_text.get_text()
-    assert confirm_result_text == "You clicked: Ok", \
-        f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
-    alert_page.js_prompt_button.js_click()
-    prompt_alert_text = browser.get_alert_text()
-    assert prompt_alert_text == "I am a JS prompt", \
-        f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
-    random_value = random_prompt()
+    random_value = random_prompt() if not use_js else random_prompt()
     browser.send_keys_alert(random_value)
     browser.accept_alert()
     browser.wait_alert_closed()
@@ -201,15 +182,43 @@ def test_dynamic_content_page(browser):
     dynamic_content_page = DynamicContentPage(browser)
     dynamic_content_page.open()
     dynamic_content_page.wait_for_open()
-    has_duplicates_avatars = dynamic_content_page.check_duplicates_avatars()
-    assert has_duplicates_avatars is True, f"Не найдены дубликаты аватаров"
+
+    max_attempts = 10
+    has_duplicates = False
+
+    for attempt in range(max_attempts):
+        avatars_sources = dynamic_content_page.get_avatars_sources()
+
+        if len(avatars_sources) != len(set(avatars_sources)):
+            has_duplicates = True
+            break
+
+        if attempt < max_attempts - 1:
+            dynamic_content_page.refresh_page()
+
+    assert has_duplicates is True, f"Не найдены дубликаты аватаров после {max_attempts} попыток"
 
 
 def test_infinite_scroll_page(browser):
     infinite_scroll_page = InfiniteScrollPage(browser)
     infinite_scroll_page.open()
     infinite_scroll_page.wait_for_open()
-    infinite_scroll_page.scroll_until_paragraphs()
+
+    max_attempts = 50
+    target_paragraphs = 27
+
+    for attempt in range(max_attempts):
+        current_count = infinite_scroll_page.get_paragraphs_count()
+
+        if current_count >= target_paragraphs:
+            break
+
+        infinite_scroll_page.scroll_to_bottom()
+        infinite_scroll_page.wait_for_open()
+
+    final_count = infinite_scroll_page.get_paragraphs_count()
+    assert final_count >= target_paragraphs, \
+        f"Не удалось достичь {target_paragraphs} параграфов. Получено: {final_count}"
 
 
 def test_upload_page(browser):
@@ -239,4 +248,4 @@ def test_upload_dialog_window(browser):
     assert expected_filename == display_file_name, \
         (f"Отображается неверное имя файла. Ожидалось: '{expected_filename}',"
          f" отображается: '{display_file_name}'")
-    assert upload_page.upload_success_mark.is_exist(), f"Галочка об успешной загрузке файла отсутствует"
+    assert upload_page.upload_success_mark.is_exist(), "Галочка об успешной загрузке файла отсутствует"

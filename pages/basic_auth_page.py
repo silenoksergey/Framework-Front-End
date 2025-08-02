@@ -16,7 +16,8 @@ class BasicAuthPage(BasePage):
         super().__init__(browser)
         self.page_name = "Basic Auth Page"
 
-        self.unique_element = Label(self.browser, self.UNIQUE_ELEMENT_LOC, description="Basic Auth Page -> success message")
+        self.unique_element = Label(self.browser, self.UNIQUE_ELEMENT_LOC,
+                                   description="Basic Auth Page -> success message")
 
         self.success_message = Label(self.browser, self.SUCCESS_MESSAGE,
                                      description="Basic Auth Page -> success message")

@@ -14,8 +14,6 @@ class AlertPage(BasePage):
     ALERT_RESULT_TEXT = "//*[@id='result']"
     JS_PROMPT_BUTTON = "//*[contains(@onclick, 'jsPrompt')]"
 
-
-
     def __init__(self, browser: Browser):
         super().__init__(browser)
         self.page_name = "Alert Page"
@@ -23,14 +21,13 @@ class AlertPage(BasePage):
         self.unique_element = Button(self.browser, self.UNIQUE_ELEMENT_LOC,
                                      description="Alert Page -> JS Alert Button")
         self.js_alert_button = Button(self.browser, self.JS_ALERT_BUTTON,
-                                      description="Alert Page -> JS Alert Button")
+                                     description="Alert Page -> JS Alert Button")
         self.alert_result_text = Label(self.browser, self.ALERT_RESULT_TEXT,
-                                       description="Alert Page -> Alert Result Text")
+                                      description="Alert Page -> Alert Result Text")
         self.js_confirm_button = Button(self.browser, self.JS_CONFIRM_BUTTON,
-                                        description="Alert Page -> JS Confirm Button")
+                                       description="Alert Page -> JS Confirm Button")
         self.js_prompt_button = Button(self.browser, self.JS_PROMPT_BUTTON,
-                                        description="Alert Page -> JS Prompt Button")
-
+                                      description="Alert Page -> JS Prompt Button")
 
     def open(self) -> None:
         Logger.info(f"{self.page_name}: open")

@@ -1,16 +1,13 @@
-import logging
 import os
 import time
-
 import pyautogui
-
 from logger.logger import Logger
 
 
 class PyAutoGUIUtilities:
     @staticmethod
     def upload_file(file_path: str) -> None:
-        Logger.info(f"Handle File Dialog for uploading file")
+        Logger.info("Handle File Dialog for uploading file")
         time.sleep(3)  # timeout after opening File Dialog
 
         directory = os.path.dirname(file_path)
@@ -32,7 +29,7 @@ class PyAutoGUIUtilities:
         pyautogui.press('enter')
         time.sleep(0.5)
 
-        logging.debug(f"Writing directory: '{directory}'")
+        Logger.debug(f"Writing directory: '{directory}'")
         pyautogui.typewrite(directory, interval=0.1)
         time.sleep(0.5)
 
@@ -45,7 +42,7 @@ class PyAutoGUIUtilities:
             pyautogui.hotkey("tab")
         time.sleep(1)
 
-        logging.debug(f"Writing filename: '{filename}'")
+        Logger.debug(f"Writing filename: '{filename}'")
         pyautogui.typewrite(filename, interval=0.1)
         time.sleep(0.5)
 
@@ -54,3 +51,4 @@ class PyAutoGUIUtilities:
         pyautogui.press('enter')
 
         time.sleep(3)  # timeout befor closing File Dialog
+

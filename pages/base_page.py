@@ -1,6 +1,7 @@
 from browser.browser import Browser
 from logger.logger import Logger
 
+
 class BasePage:
     UNIQUE_ELEMENT_LOC = None
 
@@ -10,7 +11,6 @@ class BasePage:
         self.page_name = None
 
         self.unique_element = None
-
 
     def wait_for_open(self) -> None:
         Logger.info(f"{self}: wait for open")

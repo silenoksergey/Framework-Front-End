@@ -28,19 +28,18 @@ class DynamicContentPage(BasePage):
     def open(self) -> None:
         self.browser.get(self.DYNAMIC_CONTENT_PAGE_URL)
 
-    def check_duplicates_avatars(self, max_attempts=MAX_DUPLICATE_SEARCH_ATTEMPTS) -> bool:
-        for i in range(max_attempts):
-            avatars_list = []
-            for avatar in self.avatars:
-                avatar_src = avatar.get_attribute('src')
-                if avatar_src in avatars_list:
-                    return True
-                avatars_list.append(avatar_src)
-            if i < max_attempts - 1:
-                self.browser.driver.refresh()
-                self.wait_for_open()
+    def get_avatars_sources(self) -> list:
+        avatars_sources = []
+        for avatar in self.avatars:
+            avatars_sources.append(avatar.get_attribute('src'))
+        return avatars_sources
 
+    def refresh_page(self) -> None:
+        self.browser.driver.refresh()
+        self.wait_for_open()
         return False
+
+
 
 
 
