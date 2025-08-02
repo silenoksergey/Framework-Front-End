@@ -124,19 +124,18 @@ def test_hovers_page(browser):
         profile_link = user_data['profile_link']
 
         expected_user_name = f"name: user{i + 1}"
-        assert user_name == expected_user_name,\
+        assert user_name == expected_user_name, \
             f"Ожидалось имя пользователя: '{expected_user_name}', получено: '{user_name}'"
 
         hovers_page.click_profile_link(user_block, profile_link)
 
         current_url = hovers_page.get_current_url()
         expected_user_number = f"users/{i + 1}"
-        assert expected_user_number in current_url,\
+        assert expected_user_number in current_url, \
             (f"Ожидалось, что откроется страница с пользователем {expected_user_number},"
              f" фактически открылась: {current_url}")
 
         browser.driver.back()
-
 
 
 def test_handlers_page(browser):
@@ -144,14 +143,30 @@ def test_handlers_page(browser):
     handlers_page.open()
     handlers_page.wait_for_open()
 
-    handlers_page.test_single_new_window()
+    handlers_page.open_new_window()
+    window_text = handlers_page.get_new_window_text()
+    assert window_text == handlers_page.NEW_WINDOW_PAGE_TEXT, \
+        f"Ожидался текст: '{handlers_page.NEW_WINDOW_PAGE_TEXT}', получен: '{window_text}'"
+    window_title = handlers_page.get_current_window_title()
+    assert window_title == handlers_page.NEW_WINDOW_TITLE, \
+        f"Ожидался заголовок окна: '{handlers_page.NEW_WINDOW_TITLE}', получен: '{window_title}'"
+    handlers_page.return_to_main_window()
+
     first_new_handle = handlers_page.get_last_window_handle()
-    handlers_page.test_single_new_window()
+
+    handlers_page.open_new_window()
+    window_text = handlers_page.get_new_window_text()
+    assert window_text == handlers_page.NEW_WINDOW_PAGE_TEXT, \
+        f"Ожидался текст: '{handlers_page.NEW_WINDOW_PAGE_TEXT}', получен: '{window_text}'"
+    window_title = handlers_page.get_current_window_title()
+    assert window_title == handlers_page.NEW_WINDOW_TITLE, \
+        f"Ожидался заголовок окна: '{handlers_page.NEW_WINDOW_TITLE}', получен: '{window_title}'"
+    handlers_page.return_to_main_window()
+
     second_new_handle = handlers_page.get_last_window_handle()
 
     handlers_page.switch_to_window_by_handle(first_new_handle)
     handlers_page.close_current_window()
-
     handlers_page.switch_to_window_by_handle(second_new_handle)
     handlers_page.close_current_window()
 
@@ -212,6 +227,7 @@ def test_upload_page(browser):
         (f"Неверное отображение имени файла. Ожидалось: '{upload_file_name}',"
          f" отображается: '{displayed_upload_file_name}'")
 
+
 def test_upload_dialog_window(browser):
     upload_page = UploadPage(browser)
     upload_page.open()
@@ -224,6 +240,3 @@ def test_upload_dialog_window(browser):
         (f"Отображается неверное имя файла. Ожидалось: '{expected_filename}',"
          f" отображается: '{display_file_name}'")
     assert upload_page.upload_success_mark.is_exist(), f"Галочка об успешной загрузке файла отсутствует"
-
-
-

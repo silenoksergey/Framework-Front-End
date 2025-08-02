@@ -49,14 +49,8 @@ class HandlersPage(BasePage):
     def click_new_window_link(self) -> None:
         self.link_button.click()
 
-    def verify_new_window_content(self) -> None:
-        text_page = self.new_window_page_text.get_text()
-        assert text_page == self.NEW_WINDOW_PAGE_TEXT, \
-            f"Ожидался текст '{self.NEW_WINDOW_PAGE_TEXT}', получен '{text_page}'"
-
-        title_window = self.browser.get_title()
-        assert title_window == self.NEW_WINDOW_TITLE, \
-            f"Ожидалось название текущей вкладки: '{self.NEW_WINDOW_TITLE}', получено: '{title_window}'"
+    def get_new_window_text(self) -> str:
+        return self.new_window_page_text.get_text()
 
     def get_last_window_handle(self) -> str:
         return self.browser.get_last_window_handle()
@@ -66,9 +60,13 @@ class HandlersPage(BasePage):
 
     def close_current_window(self) -> None:
         self.browser.close()
-    def test_single_new_window(self) -> None:
+
+    def get_current_window_title(self) -> str:
+        return self.browser.get_title()
+
+    def open_new_window(self) -> None:
         self.click_new_window_link()
         self.browser.switch_to_window(self.NEW_WINDOW_TITLE)
-        self.verify_new_window_content()
-        self.browser.switch_to_default_window()
 
+    def return_to_main_window(self) -> None:
+        self.browser.switch_to_default_window()
