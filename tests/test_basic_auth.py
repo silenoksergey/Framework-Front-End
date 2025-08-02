@@ -114,7 +114,29 @@ def test_actions_page(browser):
 def test_hovers_page(browser):
     hovers_page = HoversPage(browser)
     hovers_page.open()
-    hovers_page.process_all_users()
+
+    users_data = hovers_page.get_all_users_data()
+
+    for i, user_data in enumerate(users_data):
+        hovers_page.wait_for_open()
+        user_name = user_data['name']
+        user_block = user_data['block']
+        profile_link = user_data['profile_link']
+
+        expected_user_name = f"name: user{i + 1}"
+        assert user_name == expected_user_name,\
+            f"Ожидалось имя пользователя: '{expected_user_name}', получено: '{user_name}'"
+
+        hovers_page.click_profile_link(user_block, profile_link)
+
+        current_url = hovers_page.get_current_url()
+        expected_user_number = f"users/{i + 1}"
+        assert expected_user_number in current_url,\
+            (f"Ожидалось, что откроется страница с пользователем {expected_user_number},"
+             f" фактически открылась: {current_url}")
+
+        browser.driver.back()
+
 
 
 def test_handlers_page(browser):

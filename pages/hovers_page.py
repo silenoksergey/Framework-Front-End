@@ -47,34 +47,41 @@ class HoversPage(BasePage):
         selenium_element = user_block.wait_for_presence()
         ActionChains(self.browser.driver).move_to_element(selenium_element).perform()
 
-    def get_user_name(self, user_block) -> str:
+    def get_user_name(self, user_block, user_name_element) -> str:
         self.hover_user(user_block)
-        user_name_element = self.users_name.__iter__()
         return user_name_element.get_text()
 
-    def click_profile_link(self, user_block) -> None:
+    def click_profile_link(self, user_block, profile_link_element) -> None:
         self.hover_user(user_block)
-        profile_link_element = self.profile_link.__iter__()
         profile_link_element.wait_for_clickable()
         profile_link_element.click()
 
-    def process_all_users(self) -> None:
-        user_count = 0
+    def get_current_url(self) -> str:
+        return self.browser.driver.current_url
 
-        while True:
-            try:
-                user_block = self.users_blocks.__iter__()
-                user_count += 1
+    def get_all_users_data(self) -> list:
+        users_data = []
 
-                user_name = self.get_user_name(user_block)
-                assert user_name == f"name: user{user_count}"
+        user_blocks_iter = iter(self.users_blocks)
+        user_names_iter = iter(self.users_name)
+        profile_links_iter = iter(self.profile_link)
 
-                self.click_profile_link(user_block)
+        try:
+            while True:
+                user_block = next(user_blocks_iter)
+                user_name_element = next(user_names_iter)
+                profile_link_element = next(profile_links_iter)
 
-                assert f"users/{user_count}" in self.browser.driver.current_url, \
-                    f"Не удалось перейти на профиль пользователя {user_name}"
+                self.hover_user(user_block)
 
-                self.browser.driver.back()
+                user_name = self.get_user_name(user_block, user_name_element)
 
-            except StopIteration:
-                break
+                users_data.append({
+                    'block': user_block,
+                    'name': user_name,
+                    'profile_link': profile_link_element
+                })
+        except StopIteration:
+            pass
+
+        return users_data

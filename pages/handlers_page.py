@@ -66,9 +66,9 @@ class HandlersPage(BasePage):
 
     def close_current_window(self) -> None:
         self.browser.close()
-
     def test_single_new_window(self) -> None:
         self.click_new_window_link()
         self.browser.switch_to_window(self.NEW_WINDOW_TITLE)
         self.verify_new_window_content()
         self.browser.switch_to_default_window()
+
