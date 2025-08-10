@@ -32,8 +32,6 @@ class FramesPage(BasePage):
             self.BODY_FRAME,
             description="Frame Page -> Body Frame")
 
-
-
     def get_frame_text(self, frame) -> str:
         self.browser.switch_to_frame(frame)
         body_element_text = self.body_frame.get_text()

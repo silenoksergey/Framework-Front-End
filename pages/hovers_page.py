@@ -1,5 +1,4 @@
 from selenium.webdriver import ActionChains
-
 from browser.browser import Browser
 from elements.button import Button
 from elements.multi_web_element import MultiWebElement

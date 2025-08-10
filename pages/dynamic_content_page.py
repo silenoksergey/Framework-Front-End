@@ -29,6 +29,3 @@ class DynamicContentPage(BasePage):
         for avatar in self.avatars:
             avatars_sources.append(avatar.get_attribute('src'))
         return avatars_sources
-
-
-

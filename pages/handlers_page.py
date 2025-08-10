@@ -1,5 +1,3 @@
-from enum import StrEnum
-
 from browser.browser import Browser
 from elements.button import Button
 from elements.label import Label

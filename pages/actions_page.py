@@ -1,7 +1,5 @@
 import random
-
 from selenium.webdriver import ActionChains
-
 from browser.browser import Browser
 from elements.input import Input
 from elements.label import Label

@@ -1,7 +1,6 @@
 from browser.browser import Browser
 from elements.button import Button
 from elements.label import Label
-from logger.logger import Logger
 from pages.base_page import BasePage
 
 

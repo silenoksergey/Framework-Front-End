@@ -1,7 +1,6 @@
 from browser.browser import Browser
 from pages.base_page import BasePage
 from elements.button import Button
-from logger.logger import Logger
 
 
 class ContextMenuPage(BasePage):

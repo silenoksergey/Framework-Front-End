@@ -1,6 +1,5 @@
 from browser.browser import Browser
 from elements.label import Label
-from logger.logger import Logger
 from .base_page import BasePage
 
 
