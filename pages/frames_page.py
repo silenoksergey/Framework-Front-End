@@ -4,10 +4,9 @@ from pages.base_page import BasePage
 
 
 class FramesPage(BasePage):
-    UNIQUE_ELEMENT_LOC = "//*[@id='frame2']"
-    FRAMES_PAGE_URL = "https://demoqa.com/frames"
-    FIRST_FRAME = "//*[@id='frame1']"
-    SECOND_FRAME = "//*[@id='frame2']"
+    UNIQUE_ELEMENT_LOC = "frame2"
+    FIRST_FRAME = "frame1"
+    SECOND_FRAME = "frame2"
     BODY_FRAME = "//body"
 
     def __init__(self, browser: Browser):
@@ -34,10 +33,6 @@ class FramesPage(BasePage):
             description="Frame Page -> Body Frame")
 
 
-
-
-    def open(self) -> None:
-        self.browser.get(self.FRAMES_PAGE_URL)
 
     def get_frame_text(self, frame) -> str:
         self.browser.switch_to_frame(frame)

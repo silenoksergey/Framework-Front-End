@@ -32,6 +32,10 @@ class Browser:
         Logger.info(f"{self}: close window handle = '{self._driver.current_window_handle}'")
         self._driver.close()
 
+    def refresh_page(self) -> None:
+        Logger.info(f"{self}: refresh page")
+        self._driver.refresh()
+
     def get_window_handles(self) -> list:
         Logger.info(f"{self}: get window handles")
         return self._driver.window_handles

@@ -6,14 +6,12 @@ from pages.base_page import BasePage
 
 
 class UploadPage(BasePage):
-    UNIQUE_ELEMENT_LOC = "//*[@id='file-upload']"
-    IMAGE_FILE_PATH = "C:/Users/skill/PycharmProjects/Framework-Front-End/tests/test_files/images/bober.png"
-    UPLOAD_PAGE_URL = "https://the-internet.herokuapp.com/upload"
-    SELECT_FILE_BUTTON = "//*[@id='file-upload']"
-    UPLOAD_SUBMIT_BUTTON = "//*[@id='file-submit']"
+    UNIQUE_ELEMENT_LOC = "file-upload"
+    SELECT_FILE_BUTTON = "file-upload"
+    UPLOAD_SUBMIT_BUTTON = "file-submit"
     SUCCESSFUL_MESSAGE = "//*[contains(@class, 'example')]//h3"
-    UPLOAD_FILE_NAME = "//*[@id='uploaded-files']"
-    UPLOAD_AREA = "//*[@id='drag-drop-upload']"
+    UPLOAD_FILE_NAME = "uploaded-files"
+    UPLOAD_AREA = "drag-drop-upload"
     UPLOAD_AREA_FILE_DISPLAY = "//*[@id='drag-drop-upload']//*[contains(@class, 'dz-filename')]//span"
     UPLOAD_SUCCESS_MARK = "//*[@id='drag-drop-upload']//*[contains(@class, 'dz-success-mark')]//span"
 
@@ -68,10 +66,7 @@ class UploadPage(BasePage):
             description="Upload Page -> Upload Success Mark"
         )
 
-    def open(self) -> None:
-        self.browser.get(self.UPLOAD_PAGE_URL)
-
-    def upload_image(self, image_path=IMAGE_FILE_PATH) -> None:
+    def upload_image(self, image_path) -> None:
         self.select_file.send_keys(image_path)
 
     def get_upload_file_name(self) -> str:

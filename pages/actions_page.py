@@ -12,10 +12,8 @@ from selenium.webdriver.common.keys import Keys
 
 class ActionsPage(BasePage):
     UNIQUE_ELEMENT_LOC = "//*[contains(@type, 'range')]"
-
-    ACTIONS_PAGE_URL = "http://the-internet.herokuapp.com/horizontal_slider"
     SLIDER = "//*[contains(@type, 'range')]"
-    DISPLAYED_VALUE_SLIDER = "//*[@id='range']"
+    DISPLAYED_VALUE_SLIDER = "range"
 
     def __init__(self, browser: Browser):
         super().__init__(browser)
@@ -28,9 +26,6 @@ class ActionsPage(BasePage):
                                   description="Actions Page -> Slider Button")
         self.displayed_value_slider = Label(self.browser, self.DISPLAYED_VALUE_SLIDER,
                                             description="Action Page -> Slider Displayed Value")
-
-    def open(self) -> None:
-        self.browser.get(self.ACTIONS_PAGE_URL)
 
     def get_slider_value(self):
         Logger.info(f"{self} get slider value")
@@ -49,31 +44,33 @@ class ActionsPage(BasePage):
         return float(self.slider_input.get_attribute("max"))
 
     def set_random_slider_value(self) -> None:
-        action = ActionChains(self.browser.driver)
-        self.slider_input.click()
         min_value = self.get_slider_min_value()
         max_value = self.get_slider_max_value()
         step = float(self.slider_input.get_attribute("step") or 1)
         current_value = float(self.slider_input.get_attribute("value"))
-        steps_to_min = int(round((current_value - min_value) / step))
 
-        Logger.info(f"{self}: set min value slider")
-        for _ in range(steps_to_min):
-            action.send_keys(Keys.ARROW_LEFT)
-            action.perform()
-
-        Logger.info(f"{self}: set random slider value (step-aware)")
         total_steps = int(round((max_value - min_value) / step))
         if total_steps > 1:
             possible_steps = [i for i in range(1, total_steps)]
             random_step = random.choice(possible_steps)
-            value = min_value + random_step * step
-            Logger.info(f"{self}: set value {value} (step {random_step})")
+            random_value = min_value + random_step * step
+
         else:
             msg = f"{self}: No valid non-boundary values for slider"
             Logger.error(msg)
-            raise Exception(msg)
+            raise ValueError(msg)
 
-        for _ in range(random_step):
-            action.send_keys(Keys.ARROW_RIGHT)
-            action.perform()
+        Logger.info(f"{self}: set value {random_value} (step {random_step})")
+        action = ActionChains(self.browser.driver)
+        self.slider_input.click()
+
+        steps_to_min = int(round((current_value - min_value) / step))
+        Logger.info(f"{self}: moving to min value ({steps_to_min} steps)")
+        arrow_left_string = Keys.ARROW_LEFT * steps_to_min
+        action.send_keys(arrow_left_string)
+        action.perform()
+
+        Logger.info(f"{self}: moving to target value ({random_step} steps)")
+        right_left_string = Keys.ARROW_RIGHT * random_step
+        action.send_keys(right_left_string)
+        action.perform()

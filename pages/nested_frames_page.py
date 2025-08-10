@@ -4,9 +4,9 @@ from pages.base_page import BasePage
 
 
 class NestedFramesPage(BasePage):
-    UNIQUE_ELEMENT_LOC = "//*[@id='frame1']"
+    UNIQUE_ELEMENT_LOC = "frame1"
 
-    PARENT_FRAME = "//*[@id='frame1']"
+    PARENT_FRAME = "frame1"
     CHILD_FRAME = "//*[contains(@srcdoc, 'Child Iframe')]"
     BODY_FRAME = "//body"
 
@@ -49,5 +49,3 @@ class NestedFramesPage(BasePage):
         body_element_text = self.body_frame.get_text()
         self.browser.switch_to_default_content()
         return body_element_text
-
-

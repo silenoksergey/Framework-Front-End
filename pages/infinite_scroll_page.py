@@ -7,7 +7,6 @@ from pages.base_page import BasePage
 
 class InfiniteScrollPage(BasePage):
     UNIQUE_ELEMENT_LOC = "//*[contains(@class, 'scroll')]"
-    INFINITE_SCROLL_PAGE_URL = "https://the-internet.herokuapp.com/infinite_scroll"
     PARAGRAPHS = "(//*[contains(@class, 'jscroll-added')])[{}]"
     MAX_VIEW_PARAGRAPHS = 27
 
@@ -26,9 +25,6 @@ class InfiniteScrollPage(BasePage):
             description="Infinite Scroll Page -> Paragraphs"
         )
 
-    def open(self) -> None:
-        self.browser.get(self.INFINITE_SCROLL_PAGE_URL)
-
     def scroll_to_bottom(self):
         self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
@@ -42,4 +38,3 @@ class InfiniteScrollPage(BasePage):
 
     def get_paragraphs_count(self) -> int:
         return self.count_paragraphs()
-

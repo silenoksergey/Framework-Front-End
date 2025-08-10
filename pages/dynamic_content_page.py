@@ -5,8 +5,7 @@ from pages.base_page import BasePage
 
 
 class DynamicContentPage(BasePage):
-    UNIQUE_ELEMENT_LOC = "//*[@id='flash-messages']"
-    DYNAMIC_CONTENT_PAGE_URL = "https://the-internet.herokuapp.com/dynamic_content"
+    UNIQUE_ELEMENT_LOC = "flash-messages"
     AVATARS = "(//*[contains(@class, 'large-2 columns')]//img)[{}]"
     MAX_DUPLICATE_SEARCH_ATTEMPTS = 10
 
@@ -25,23 +24,11 @@ class DynamicContentPage(BasePage):
             description="Dynamic Content Page -> Avatars"
         )
 
-    def open(self) -> None:
-        self.browser.get(self.DYNAMIC_CONTENT_PAGE_URL)
-
     def get_avatars_sources(self) -> list:
         avatars_sources = []
         for avatar in self.avatars:
             avatars_sources.append(avatar.get_attribute('src'))
         return avatars_sources
-
-    def refresh_page(self) -> None:
-        self.browser.driver.refresh()
-        self.wait_for_open()
-        return False
-
-
-
-
 
 
 

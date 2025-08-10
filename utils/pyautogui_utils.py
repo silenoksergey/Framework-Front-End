@@ -1,54 +1,29 @@
-import os
-import time
-import pyautogui
+from pathlib import Path
 from logger.logger import Logger
+from pywinauto import Desktop, timings
 
 
 class PyAutoGUIUtilities:
     @staticmethod
     def upload_file(file_path: str) -> None:
-        Logger.info("Handle File Dialog for uploading file")
-        time.sleep(3)  # timeout after opening File Dialog
+        Logger.info("Handle File Dialog for uploading file (pywinauto)")
+        path = str(Path(file_path).resolve())
+        if not Path(path).exists():
+            raise FileNotFoundError(f"File not found: {path}")
 
-        directory = os.path.dirname(file_path)
-        filename = os.path.basename(file_path)
+        timings.Timings.window_find_timeout = 8.0
+        timings.Timings.after_clickinput_wait = 0.2
 
-        Logger.info(f"Directory: {directory}")
-        Logger.info(f"Filename: {filename}")
+        dlg = Desktop(backend="win32").window(class_name="#32770", active_only=True)
+        dlg.wait("exists enabled visible ready", timeout=8)
+        dlg.set_focus()
 
-        if not os.path.exists(file_path):
-            Logger.error(f"File not found: {file_path}")
-            raise FileNotFoundError(f"Файл не найден: {file_path}")
+        edit = dlg.child_window(class_name="Edit")
+        edit.wait("exists enabled visible ready", timeout=2)
+        edit.set_edit_text(path)
 
-        for i in range(5):
-            Logger.debug("Press tab")
-            pyautogui.hotkey("tab")
-        time.sleep(1)
-
-        Logger.debug("Press enter")
-        pyautogui.press('enter')
-        time.sleep(0.5)
-
-        Logger.debug(f"Writing directory: '{directory}'")
-        pyautogui.typewrite(directory, interval=0.1)
-        time.sleep(0.5)
-
-        Logger.debug("Press enter")
-        pyautogui.press('enter')
-        time.sleep(2)
-
-        for i in range(6):
-            Logger.debug("Press tab")
-            pyautogui.hotkey("tab")
-        time.sleep(1)
-
-        Logger.debug(f"Writing filename: '{filename}'")
-        pyautogui.typewrite(filename, interval=0.1)
-        time.sleep(0.5)
-
-        Logger.debug("Press enter")
-
-        pyautogui.press('enter')
-
-        time.sleep(3)  # timeout befor closing File Dialog
-
+        open_btn = dlg.child_window(title_re=r"^(Open|Открыть)$", class_name="Button")
+        if open_btn.exists(timeout=1.0):
+            open_btn.click_input()
+        else:
+            dlg.type_keys("{ENTER}")

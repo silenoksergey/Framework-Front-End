@@ -1,5 +1,4 @@
-import os
-
+from pathlib import Path
 from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage
 from pages.basic_auth_page import BasicAuthPage
@@ -18,72 +17,75 @@ from utils.random_data import random_prompt
 
 def test_basic_auth_page(browser):
     basic_auth_page = BasicAuthPage(browser)
-    basic_auth_page.open()
+    browser.get("http://admin:admin@the-internet.herokuapp.com/basic_auth")
+    basic_auth_page.wait_for_open()
     success_message = basic_auth_page.get_success_message()
     assert success_message == "Congratulations! You must have the proper credentials.", \
         f"Ожидался текст 'Congratulations! You must have the proper credentials.', получен {success_message}"
 
 
 def test_alerts_page(browser):
+    browser.get("https://the-internet.herokuapp.com/javascript_alerts")
     alert_page = AlertPage(browser)
-    alert_page.open()
+    alert_page.wait_for_open()
 
-    _test_alert_workflow(alert_page, browser, use_js=False)
+    _test_alert_workflow(alert_page, use_js=False)
 
-    _test_alert_workflow(alert_page, browser, use_js=True)
+    _test_alert_workflow(alert_page, use_js=True)
 
 
-def _test_alert_workflow(alert_page, browser, use_js=False):
-    click_method = "js_click" if use_js else "click"
-
-    getattr(alert_page.js_alert_button, click_method)()
-    alert_text = browser.get_alert_text()
+def _test_alert_workflow(alert_page, use_js=False):
+    alert_page.click_js_alert_button(use_js)
+    alert_text = alert_page.get_alert_text()
     assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
-    browser.accept_alert()
+    alert_page.accept_alert()
     if not use_js:
-        browser.wait_alert_closed()
-    alert_result_text = alert_page.alert_result_text.get_text()
+        alert_page.wait_for_alert_closed()
+    alert_result_text = alert_page.get_alert_result_text()
     assert alert_result_text == "You successfully clicked an alert", \
         f"Ожидался текст: You successfully clicked an alert, получен {alert_result_text}"
 
-    getattr(alert_page.js_confirm_button, click_method)()
-    confirm_alert_text = browser.get_alert_text()
+    alert_page.click_js_confirm_button(use_js)
+    confirm_alert_text = alert_page.get_alert_text()
     assert confirm_alert_text == "I am a JS Confirm", \
         f"Ожидался текст: 'I am a JS Confirm', получен: {confirm_alert_text}"
-    browser.accept_alert()
+    alert_page.accept_alert()
     if not use_js:
-        browser.wait_alert_closed()
-    confirm_result_text = alert_page.alert_result_text.get_text()
+        alert_page.wait_for_alert_closed()
+    confirm_result_text = alert_page.get_alert_result_text()
     assert confirm_result_text == "You clicked: Ok", \
         f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
 
-    getattr(alert_page.js_prompt_button, click_method)()
-    prompt_alert_text = browser.get_alert_text()
+    alert_page.click_js_prompt_button(use_js)
+    prompt_alert_text = alert_page.get_alert_text()
     assert prompt_alert_text == "I am a JS prompt", \
         f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
     random_value = random_prompt() if not use_js else random_prompt()
-    browser.send_keys_alert(random_value)
-    browser.accept_alert()
-    browser.wait_alert_closed()
-    prompt_result_text = alert_page.alert_result_text.get_text()
+    alert_page.send_keys_to_alert(random_value)
+    alert_page.accept_alert()
+    alert_page.wait_for_alert_closed()
+    prompt_result_text = alert_page.get_alert_result_text()
     assert prompt_result_text == f"You entered: {random_value}", \
         f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
 
 
 def test_context_menu_page(browser):
+    browser.get("https://the-internet.herokuapp.com/context_menu")
     context_menu_page = ContextMenuPage(browser)
-    context_menu_page.open()
-    context_menu_page.context_menu_area.right_click()
-    context_menu_text = browser.get_alert_text()
+    context_menu_page.wait_for_open()
+
+    context_menu_page.right_click_context_menu_area()
+    context_menu_text = context_menu_page.get_alert_text()
     assert context_menu_text == "You selected a context menu", \
         f"Ожидался текст: 'You selected a context menu', получен: {context_menu_text}"
-    browser.accept_alert()
-    browser.wait_alert_closed()
+    context_menu_page.accept_alert()
+    context_menu_page.wait_for_alert_closed()
 
 
 def test_actions_page(browser):
     actions_page = ActionsPage(browser)
-    actions_page.open()
+    browser.get("http://the-internet.herokuapp.com/horizontal_slider")
+    actions_page.wait_for_open()
     slider_button = actions_page.slider_input
     actions_page.set_random_slider_value()
     slider_value = actions_page.get_slider_value()
@@ -94,7 +96,8 @@ def test_actions_page(browser):
 
 def test_hovers_page(browser):
     hovers_page = HoversPage(browser)
-    hovers_page.open()
+    browser.get("http://the-internet.herokuapp.com/hovers")
+    hovers_page.wait_for_open()
 
     users_data = hovers_page.get_all_users_data()
 
@@ -121,42 +124,44 @@ def test_hovers_page(browser):
 
 def test_handlers_page(browser):
     handlers_page = HandlersPage(browser)
-    handlers_page.open()
+    browser.get("https://the-internet.herokuapp.com/windows")
     handlers_page.wait_for_open()
 
-    handlers_page.open_new_window()
+    handlers_page.click_new_window_link()
+    browser.switch_to_window(HandlersPage.NEW_WINDOW_TITLE)
     window_text = handlers_page.get_new_window_text()
-    assert window_text == handlers_page.NEW_WINDOW_PAGE_TEXT, \
-        f"Ожидался текст: '{handlers_page.NEW_WINDOW_PAGE_TEXT}', получен: '{window_text}'"
-    window_title = handlers_page.get_current_window_title()
-    assert window_title == handlers_page.NEW_WINDOW_TITLE, \
-        f"Ожидался заголовок окна: '{handlers_page.NEW_WINDOW_TITLE}', получен: '{window_title}'"
-    handlers_page.return_to_main_window()
+    assert window_text == HandlersPage.NEW_WINDOW_PAGE_TEXT, \
+        f"Ожидался текст: '{HandlersPage.NEW_WINDOW_PAGE_TEXT}', получен: '{window_text}'"
+    window_title = browser.get_title()
+    assert window_title == HandlersPage.NEW_WINDOW_TITLE, \
+        f"Ожидался заголовок окна: '{HandlersPage.NEW_WINDOW_TITLE}', получен: '{window_title}'"
+    browser.switch_to_default_window()
 
-    first_new_handle = handlers_page.get_last_window_handle()
+    first_new_handle = browser.get_last_window_handle()
 
-    handlers_page.open_new_window()
+    handlers_page.click_new_window_link()
+    browser.switch_to_window(HandlersPage.NEW_WINDOW_TITLE)
     window_text = handlers_page.get_new_window_text()
-    assert window_text == handlers_page.NEW_WINDOW_PAGE_TEXT, \
-        f"Ожидался текст: '{handlers_page.NEW_WINDOW_PAGE_TEXT}', получен: '{window_text}'"
-    window_title = handlers_page.get_current_window_title()
-    assert window_title == handlers_page.NEW_WINDOW_TITLE, \
-        f"Ожидался заголовок окна: '{handlers_page.NEW_WINDOW_TITLE}', получен: '{window_title}'"
-    handlers_page.return_to_main_window()
+    assert window_text == HandlersPage.NEW_WINDOW_PAGE_TEXT, \
+        f"Ожидался текст: '{HandlersPage.NEW_WINDOW_PAGE_TEXT}', получен: '{window_text}'"
+    window_title = browser.get_title()
+    assert window_title == HandlersPage.NEW_WINDOW_TITLE, \
+        f"Ожидался заголовок окна: '{HandlersPage.NEW_WINDOW_TITLE}', получен: '{window_title}'"
+    browser.switch_to_default_window()
 
-    second_new_handle = handlers_page.get_last_window_handle()
+    second_new_handle = browser.get_last_window_handle()
 
-    handlers_page.switch_to_window_by_handle(first_new_handle)
-    handlers_page.close_current_window()
-    handlers_page.switch_to_window_by_handle(second_new_handle)
-    handlers_page.close_current_window()
+    browser.switch_to_window_by_handle(first_new_handle)
+    browser.close()
+    browser.switch_to_window_by_handle(second_new_handle)
+    browser.close()
 
 
 def test_frames_pages(browser):
     frames_main_page = FramesMainPage(browser)
     frames_page = FramesPage(browser)
     nested_frames_page = NestedFramesPage(browser)
-    frames_page.open()
+    browser.get("https://demoqa.com/frames")
     frames_page.wait_for_open()
     frames_main_page.click_ensure_menu()
     frames_main_page.nested_frames_button.click()
@@ -180,7 +185,7 @@ def test_frames_pages(browser):
 
 def test_dynamic_content_page(browser):
     dynamic_content_page = DynamicContentPage(browser)
-    dynamic_content_page.open()
+    browser.get("https://the-internet.herokuapp.com/dynamic_content")
     dynamic_content_page.wait_for_open()
 
     max_attempts = 10
@@ -194,14 +199,15 @@ def test_dynamic_content_page(browser):
             break
 
         if attempt < max_attempts - 1:
-            dynamic_content_page.refresh_page()
+            browser.refresh_page()
+            dynamic_content_page.wait_for_open()
 
-    assert has_duplicates is True, f"Не найдены дубликаты аватаров после {max_attempts} попыток"
+    assert has_duplicates, f"Не найдены дубликаты аватаров после {max_attempts} попыток"
 
 
 def test_infinite_scroll_page(browser):
     infinite_scroll_page = InfiniteScrollPage(browser)
-    infinite_scroll_page.open()
+    browser.get("https://the-internet.herokuapp.com/infinite_scroll")
     infinite_scroll_page.wait_for_open()
 
     max_attempts = 50
@@ -223,9 +229,10 @@ def test_infinite_scroll_page(browser):
 
 def test_upload_page(browser):
     upload_page = UploadPage(browser)
-    upload_page.open()
+    file_path = (Path(__file__).parent / "test_files" / "images" / "bober.png").resolve()
+    browser.get("https://the-internet.herokuapp.com/upload")
     upload_page.wait_for_open()
-    upload_page.upload_image()
+    upload_page.upload_image(str(file_path))
     upload_file_name = upload_page.get_upload_file_name()
     upload_page.upload_submit_button.click()
     successful_message = upload_page.successful_message.get_text()
@@ -239,13 +246,18 @@ def test_upload_page(browser):
 
 def test_upload_dialog_window(browser):
     upload_page = UploadPage(browser)
-    upload_page.open()
+    browser.get("https://the-internet.herokuapp.com/upload")
     upload_page.wait_for_open()
+
     upload_page.upload_area.click()
-    PyAutoGUIUtilities.upload_file(upload_page.IMAGE_FILE_PATH)
-    expected_filename = os.path.basename(upload_page.IMAGE_FILE_PATH)
+
+    file_path = (Path(__file__).parent / "test_files" / "images" / "bober.png").resolve()
+    PyAutoGUIUtilities.upload_file(str(file_path))
+
+    expected_filename = file_path.name
     display_file_name = upload_page.upload_area_file_display.get_text()
-    assert expected_filename == display_file_name, \
-        (f"Отображается неверное имя файла. Ожидалось: '{expected_filename}',"
-         f" отображается: '{display_file_name}'")
+    assert expected_filename == display_file_name, (
+        f"Отображается неверное имя файла. Ожидалось: '{expected_filename}', "
+        f"отображается: '{display_file_name}'"
+    )
     assert upload_page.upload_success_mark.is_exist(), "Галочка об успешной загрузке файла отсутствует"

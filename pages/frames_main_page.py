@@ -37,6 +37,6 @@ class FramesMainPage(BasePage):
         if self.is_menu_expanded():
             Logger.info(f"{self}: menu already expanded")
             return
-        else:
-            Logger.info(f"{self}: expanding menu")
-            self.ensure_menu.click()
+
+        Logger.info(f"{self}: expanding menu")
+        self.ensure_menu.click()

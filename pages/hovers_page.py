@@ -8,7 +8,6 @@ from pages.base_page import BasePage
 
 class HoversPage(BasePage):
     UNIQUE_ELEMENT_LOC = "//*[contains(@class, 'figure')]"
-    HOVERS_PAGE_URL = "http://the-internet.herokuapp.com/hovers"
     USER_BLOCKS = "//*[contains(@class, 'figure')][{}]"
     USER_NAME = "//*[contains(@class, 'figure')][{}]//*[contains(@class, 'figcaption')]/h5"
     PROFILE_LINK = "//*[contains(@class, 'figure')][{}]//*[contains(@class, 'figcaption')]/a"
@@ -40,9 +39,6 @@ class HoversPage(BasePage):
             description="Hovers Page -> Profile Links"
         )
 
-    def open(self) -> None:
-        self.browser.get(self.HOVERS_PAGE_URL)
-
     def hover_user(self, user_block) -> None:
         selenium_element = user_block.wait_for_presence()
         ActionChains(self.browser.driver).move_to_element(selenium_element).perform()
@@ -62,26 +58,13 @@ class HoversPage(BasePage):
     def get_all_users_data(self) -> list:
         users_data = []
 
-        user_blocks_iter = iter(self.users_blocks)
-        user_names_iter = iter(self.users_name)
-        profile_links_iter = iter(self.profile_link)
-
-        try:
-            while True:
-                user_block = next(user_blocks_iter)
-                user_name_element = next(user_names_iter)
-                profile_link_element = next(profile_links_iter)
-
-                self.hover_user(user_block)
-
-                user_name = self.get_user_name(user_block, user_name_element)
-
-                users_data.append({
-                    'block': user_block,
-                    'name': user_name,
-                    'profile_link': profile_link_element
-                })
-        except StopIteration:
-            pass
+        for user_block, user_name_el, profile_link_el in zip(self.users_blocks, self.users_name, self.profile_link):
+            self.hover_user(user_block)
+            user_name = self.get_user_name(user_block, user_name_el)
+            users_data.append({
+                "block": user_block,
+                "name": user_name,
+                "profile_link": profile_link_el
+            })
 
         return users_data
