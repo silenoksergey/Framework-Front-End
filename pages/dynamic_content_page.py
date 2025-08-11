@@ -6,8 +6,7 @@ from pages.base_page import BasePage
 
 class DynamicContentPage(BasePage):
     UNIQUE_ELEMENT_LOC = "flash-messages"
-    AVATARS = "(//*[contains(@class, 'large-2 columns')]//img)[{}]"
-    MAX_DUPLICATE_SEARCH_ATTEMPTS = 10
+    AVATARS = "(//*[contains(@class, 'large-2') and contains(@class, 'columns')]//img)[{}]"
 
     def __init__(self, browser: Browser):
         super().__init__(browser)

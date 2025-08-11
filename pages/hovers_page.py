@@ -8,8 +8,8 @@ from pages.base_page import BasePage
 class HoversPage(BasePage):
     UNIQUE_ELEMENT_LOC = "//*[contains(@class, 'figure')]"
     USER_BLOCKS = "//*[contains(@class, 'figure')][{}]"
-    USER_NAME = "//*[contains(@class, 'figure')][{}]//*[contains(@class, 'figcaption')]/h5"
-    PROFILE_LINK = "//*[contains(@class, 'figure')][{}]//*[contains(@class, 'figcaption')]/a"
+    USER_NAME = "//*[contains(@class, 'figure')][{}]//*[contains(@class, 'figcaption')]//h5"
+    PROFILE_LINK = "//*[contains(@class, 'figure')][{}]//*[contains(@class, 'figcaption')]//a"
 
     def __init__(self, browser: Browser):
         super().__init__(browser)

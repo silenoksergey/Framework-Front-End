@@ -1,6 +1,7 @@
 from pathlib import Path
+from config.urls import internet, demoqa, InternetEP, DemoqaEP, internet_auth
 from pages.actions_page import ActionsPage
-from pages.alert_page import AlertPage
+from pages.alert_page import AlertPage, ClickMode
 from pages.basic_auth_page import BasicAuthPage
 from pages.context_menu_page import ContextMenuPage
 from pages.dynamic_content_page import DynamicContentPage
@@ -16,8 +17,11 @@ from utils.random_data import random_prompt
 
 
 def test_basic_auth_page(browser):
+    user = "admin"
+    pwd = "admin"
+
     basic_auth_page = BasicAuthPage(browser)
-    browser.get("http://admin:admin@the-internet.herokuapp.com/basic_auth")
+    browser.get(internet_auth(InternetEP.BASIC_AUTH, user, pwd))
     basic_auth_page.wait_for_open()
     success_message = basic_auth_page.get_success_message()
     assert success_message == "Congratulations! You must have the proper credentials.", \
@@ -25,52 +29,53 @@ def test_basic_auth_page(browser):
 
 
 def test_alerts_page(browser):
-    browser.get("https://the-internet.herokuapp.com/javascript_alerts")
+    browser.get(internet(InternetEP.JAVASCRIPT_ALERTS))
     alert_page = AlertPage(browser)
     alert_page.wait_for_open()
 
-    _test_alert_workflow(alert_page, use_js=False)
+    _test_alert_workflow(alert_page, mode=ClickMode.NATIVE)
 
-    _test_alert_workflow(alert_page, use_js=True)
+    _test_alert_workflow(alert_page, mode=ClickMode.JS)
 
 
-def _test_alert_workflow(alert_page, use_js=False):
-    alert_page.click_js_alert_button(use_js)
+def _test_alert_workflow(alert_page: AlertPage, mode: ClickMode):
+    alert_page.click_js_alert_button(mode)
     alert_text = alert_page.get_alert_text()
-    assert alert_text == "I am a JS Alert", f"Ожидался текст: 'I am a JS Alert', получен {alert_text}"
+    expected_alert = "I am a JS Alert"
+    assert alert_text == expected_alert, f"Ожидалось: '{expected_alert}', получено: '{alert_text}'"
     alert_page.accept_alert()
-    if not use_js:
+    if mode is ClickMode.NATIVE:
         alert_page.wait_for_alert_closed()
-    alert_result_text = alert_page.get_alert_result_text()
-    assert alert_result_text == "You successfully clicked an alert", \
-        f"Ожидался текст: You successfully clicked an alert, получен {alert_result_text}"
+    result_text = alert_page.get_alert_result_text()
+    expected_result = "You successfully clicked an alert"
+    assert result_text == expected_result, f"Ожидалось: '{expected_result}', получено: '{result_text}'"
 
-    alert_page.click_js_confirm_button(use_js)
-    confirm_alert_text = alert_page.get_alert_text()
-    assert confirm_alert_text == "I am a JS Confirm", \
-        f"Ожидался текст: 'I am a JS Confirm', получен: {confirm_alert_text}"
+    alert_page.click_js_confirm_button(mode)
+    confirm_text = alert_page.get_alert_text()
+    expected_confirm = "I am a JS Confirm"
+    assert confirm_text == expected_confirm, f"Ожидалось: '{expected_confirm}', получено: '{confirm_text}'"
     alert_page.accept_alert()
-    if not use_js:
+    if mode is ClickMode.NATIVE:
         alert_page.wait_for_alert_closed()
-    confirm_result_text = alert_page.get_alert_result_text()
-    assert confirm_result_text == "You clicked: Ok", \
-        f"Ожидался текст: 'You clicked: Ok', получен: {confirm_result_text}"
+    confirm_result = alert_page.get_alert_result_text()
+    expected_confirm_result = "You clicked: Ok"
+    assert confirm_result == expected_confirm_result, f"Ожидалось: '{expected_confirm_result}', получено: '{confirm_result}'"
 
-    alert_page.click_js_prompt_button(use_js)
-    prompt_alert_text = alert_page.get_alert_text()
-    assert prompt_alert_text == "I am a JS prompt", \
-        f"Ожидался текст: 'I am a JS prompt', получен {prompt_alert_text}"
-    random_value = random_prompt() if not use_js else random_prompt()
-    alert_page.send_keys_to_alert(random_value)
+    alert_page.click_js_prompt_button(mode)
+    prompt_text = alert_page.get_alert_text()
+    expected_prompt = "I am a JS prompt"
+    assert prompt_text == expected_prompt, f"Ожидалось: '{expected_prompt}', получено: '{prompt_text}'"
+    value = random_prompt()
+    alert_page.send_keys_to_alert(value)
     alert_page.accept_alert()
     alert_page.wait_for_alert_closed()
-    prompt_result_text = alert_page.get_alert_result_text()
-    assert prompt_result_text == f"You entered: {random_value}", \
-        f"Ожидался текст: You entered: {random_value}, получен: {prompt_result_text}"
+    prompt_result = alert_page.get_alert_result_text()
+    expected_prompt_result = f"You entered: {value}"
+    assert prompt_result == expected_prompt_result, f"Ожидалось: '{expected_prompt_result}', получено: '{prompt_result}'"
 
 
 def test_context_menu_page(browser):
-    browser.get("https://the-internet.herokuapp.com/context_menu")
+    browser.get(internet(InternetEP.CONTEXT_MENU))
     context_menu_page = ContextMenuPage(browser)
     context_menu_page.wait_for_open()
 
@@ -84,7 +89,7 @@ def test_context_menu_page(browser):
 
 def test_actions_page(browser):
     actions_page = ActionsPage(browser)
-    browser.get("http://the-internet.herokuapp.com/horizontal_slider")
+    browser.get(internet(InternetEP.HORIZONTAL_SLIDER))
     actions_page.wait_for_open()
     slider_button = actions_page.slider_input
     actions_page.set_random_slider_value()
@@ -96,7 +101,7 @@ def test_actions_page(browser):
 
 def test_hovers_page(browser):
     hovers_page = HoversPage(browser)
-    browser.get("http://the-internet.herokuapp.com/hovers")
+    browser.get(internet(InternetEP.HOVERS))
     hovers_page.wait_for_open()
 
     users_data = hovers_page.get_all_users_data()
@@ -119,12 +124,12 @@ def test_hovers_page(browser):
             (f"Ожидалось, что откроется страница с пользователем {expected_user_number},"
              f" фактически открылась: {current_url}")
 
-        browser.driver.back()
+        browser.back()
 
 
 def test_handlers_page(browser):
     handlers_page = HandlersPage(browser)
-    browser.get("https://the-internet.herokuapp.com/windows")
+    browser.get(internet(InternetEP.WINDOWS))
     handlers_page.wait_for_open()
 
     handlers_page.click_new_window_link()
@@ -161,7 +166,7 @@ def test_frames_pages(browser):
     frames_main_page = FramesMainPage(browser)
     frames_page = FramesPage(browser)
     nested_frames_page = NestedFramesPage(browser)
-    browser.get("https://demoqa.com/frames")
+    browser.get(demoqa(DemoqaEP.FRAMES))
     frames_page.wait_for_open()
     frames_main_page.click_ensure_menu()
     frames_main_page.nested_frames_button.click()
@@ -185,7 +190,7 @@ def test_frames_pages(browser):
 
 def test_dynamic_content_page(browser):
     dynamic_content_page = DynamicContentPage(browser)
-    browser.get("https://the-internet.herokuapp.com/dynamic_content")
+    browser.get(internet(InternetEP.DYNAMIC_CONTENT))
     dynamic_content_page.wait_for_open()
 
     max_attempts = 10
@@ -207,7 +212,7 @@ def test_dynamic_content_page(browser):
 
 def test_infinite_scroll_page(browser):
     infinite_scroll_page = InfiniteScrollPage(browser)
-    browser.get("https://the-internet.herokuapp.com/infinite_scroll")
+    browser.get(internet(InternetEP.INFINITE_SCROLL))
     infinite_scroll_page.wait_for_open()
 
     max_attempts = 50
@@ -230,7 +235,7 @@ def test_infinite_scroll_page(browser):
 def test_upload_page(browser):
     upload_page = UploadPage(browser)
     file_path = (Path(__file__).parent / "test_files" / "images" / "bober.png").resolve()
-    browser.get("https://the-internet.herokuapp.com/upload")
+    browser.get(internet(InternetEP.UPLOAD))
     upload_page.wait_for_open()
     upload_page.upload_image(str(file_path))
     upload_file_name = upload_page.get_upload_file_name()
@@ -246,7 +251,7 @@ def test_upload_page(browser):
 
 def test_upload_dialog_window(browser):
     upload_page = UploadPage(browser)
-    browser.get("https://the-internet.herokuapp.com/upload")
+    browser.get(internet(InternetEP.UPLOAD))
     upload_page.wait_for_open()
 
     upload_page.upload_area.click()

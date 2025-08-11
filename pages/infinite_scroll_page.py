@@ -8,7 +8,6 @@ from pages.base_page import BasePage
 class InfiniteScrollPage(BasePage):
     UNIQUE_ELEMENT_LOC = "//*[contains(@class, 'scroll')]"
     PARAGRAPHS = "(//*[contains(@class, 'jscroll-added')])[{}]"
-    MAX_VIEW_PARAGRAPHS = 27
 
     def __init__(self, browser: Browser):
         super().__init__(browser)
@@ -28,13 +27,10 @@ class InfiniteScrollPage(BasePage):
     def scroll_to_bottom(self):
         self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-    def count_paragraphs(self) -> int:
+    def get_paragraphs_count(self) -> int:
         count = 0
         for element in self.paragraphs:
             count += 1
 
         Logger.info(f"Найдено элементов с классом 'jscroll-added': {count}")
         return count
-
-    def get_paragraphs_count(self) -> int:
-        return self.count_paragraphs()

@@ -48,15 +48,14 @@ class ActionsPage(BasePage):
         current_value = float(self.slider_input.get_attribute("value"))
 
         total_steps = int(round((max_value - min_value) / step))
-        if total_steps > 1:
-            possible_steps = [i for i in range(1, total_steps)]
-            random_step = random.choice(possible_steps)
-            random_value = min_value + random_step * step
-
-        else:
+        if total_steps <= 1:
             msg = f"{self}: No valid non-boundary values for slider"
             Logger.error(msg)
             raise ValueError(msg)
+
+        possible_steps = [i for i in range(1, total_steps)]
+        random_step = random.choice(possible_steps)
+        random_value = min_value + random_step * step
 
         Logger.info(f"{self}: set value {random_value} (step {random_step})")
         action = ActionChains(self.browser.driver)

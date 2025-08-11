@@ -56,6 +56,14 @@ class Browser:
             logging.error(f"{self}: {err}")
             raise
 
+    def back(self) -> None:
+        Logger.info(f"{self}: back")
+        try:
+            self._driver.back()
+        except  WebDriverException as err:
+            Logger.error(f"{self}: {err}")
+            raise
+
     def execute_script(self, script: str, *args) -> None:
         Logger.info(f"{self}: execute script = '{script}' with args = '{args}'")
         try:
@@ -109,22 +117,22 @@ class Browser:
         Logger.info(f"{self}: wait alert closed")
         return self._wait.until_not(expected_conditions.alert_is_present())
 
-    def switch_to_alert(self):
+    def _switch_to_alert(self):
         Logger.info(f"{self}: switch to alert")
         self.wait_alert_present()
         return self.driver.switch_to.alert
 
     def get_alert_text(self):
         Logger.info(f"{self}: get alert text")
-        return self.switch_to_alert().text
+        return self._switch_to_alert().text
 
     def accept_alert(self):
         Logger.info(f"{self}: accept alert")
-        self.switch_to_alert().accept()
+        self._switch_to_alert().accept()
 
     def send_keys_alert(self, text: str):
         Logger.info(f"{self}: send '{text}' to alert")
-        self.switch_to_alert().send_keys(text)
+        self._switch_to_alert().send_keys(text)
 
     def switch_to_frame(self, frame: 'BaseElement'):
         Logger.info(f"{self}: switch to frame")
