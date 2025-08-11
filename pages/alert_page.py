@@ -39,8 +39,6 @@ class AlertPage(BasePage):
             button.click()
         elif mode is ClickMode.JS:
             button.js_click()
-        else:
-            raise ValueError(f"Unsupported ClickMode: {mode}")
 
     def click_js_alert_button(self, mode: ClickMode = ClickMode.NATIVE) -> None:
         self._click_with_mode(self.js_alert_button, mode)
