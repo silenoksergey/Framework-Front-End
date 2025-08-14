@@ -1,4 +1,6 @@
+import sys
 from pathlib import Path
+import pytest
 from config.urls import internet, demoqa, InternetEP, DemoqaEP, internet_auth
 from pages.actions_page import ActionsPage
 from pages.alert_page import AlertPage, ClickMode
@@ -12,8 +14,10 @@ from pages.hovers_page import HoversPage
 from pages.infinite_scroll_page import InfiniteScrollPage
 from pages.nested_frames_page import NestedFramesPage
 from pages.upload_page import UploadPage
-from utils.pyautogui_utils import PyAutoGUIUtilities
 from utils.random_data import random_prompt
+
+if sys.platform == "win32":
+    from utils.pyautogui_utils import PyAutoGUIUtilities
 
 
 def test_basic_auth_page(browser):
@@ -232,6 +236,7 @@ def test_infinite_scroll_page(browser):
         f"Не удалось достичь {target_paragraphs} параграфов. Получено: {final_count}"
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Requires Windows GUI (pywinauto)")
 def test_upload_page(browser):
     upload_page = UploadPage(browser)
     file_path = (Path(__file__).parent / "test_files" / "images" / "bober.png").resolve()
@@ -249,6 +254,7 @@ def test_upload_page(browser):
          f" отображается: '{displayed_upload_file_name}'")
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Requires Windows GUI (pywinauto)")
 def test_upload_dialog_window(browser):
     upload_page = UploadPage(browser)
     browser.get(internet(InternetEP.UPLOAD))
